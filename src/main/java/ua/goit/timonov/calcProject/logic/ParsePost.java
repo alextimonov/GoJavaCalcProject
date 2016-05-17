@@ -32,8 +32,7 @@ public class ParsePost {
         double number1, number2;
         double result;
         for (String item : postfixWrite) {
-//            stackOperands.displayStack(""+symbol+" "); // *диагностика*
-            if (InfixToPostfix.referToNumber(item.charAt(0))) {
+            if (isNumber(item)) {
                 stackOperands.addFirst(Double.parseDouble(item) ); // Занести в стек
             }
             else // Если это оператор
@@ -45,8 +44,8 @@ public class ParsePost {
                     throw new IllegalArgumentException(e.getMessage() +
                             " There's not enough operators or unwanted closing bracket");
                 }
-                switch (item.charAt(0)) // Выполнение арифметической
-                { // операции
+                switch (item.charAt(0))
+                {
                     case PLUS:
                         result = number1 + number2;
                     break;
@@ -76,5 +75,12 @@ public class ParsePost {
 //            throw new IllegalArgumentException(e.getMessage() + " There's not enough operators!");
 //        }
         return result;
+    }
+
+    private boolean isNumber(String string) {
+        char firstSymbol = string.charAt(0);
+        return (firstSymbol >= InfixToPostfix.DIGIT_0 && firstSymbol <= InfixToPostfix.DIGIT_9) ||
+                firstSymbol == InfixToPostfix.DOT ||
+                (firstSymbol == InfixToPostfix.MINUS && string.length() > 1);
     }
 }

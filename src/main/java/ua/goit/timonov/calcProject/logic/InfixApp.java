@@ -8,6 +8,7 @@ import java.util.logging.LogManager;
 /**
  * Created by Alex on 14.05.2016.
  */
+@Deprecated
 public class InfixApp {
      public static void main(String[] args) throws IOException
         {

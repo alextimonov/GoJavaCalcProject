@@ -28,20 +28,20 @@ public class InfixToPostfix {
     private String inputString;
     private List postfixWrite = new ArrayList<String>();
 
-    public InfixToPostfix(String inputString) // Конструктор
+    public InfixToPostfix(String inputString)
     {
         this.inputString = inputString;
         operatorStack = new LinkedList<Character>();
     }
 
-    public List<String> transform() // Преобразование в постфиксную форму
+    public List<String> transform()
     {
         log.info("Input string: " + inputString);
         StringBuilder nextNumber = new StringBuilder();
         for (int j = 0; j < inputString.length(); j++)
         {
             char symbol = inputString.charAt(j);
-            if (referToNumber(symbol)) nextNumber.append(symbol);
+            if (referToNumber(symbol, j)) nextNumber.append(symbol);
             else {
                 if (nextNumber.length() > 0) {
                     checkNumber(nextNumber);
@@ -90,21 +90,26 @@ public class InfixToPostfix {
         if (numberOfDots > 1) throw new IllegalArgumentException("Wrong number! Too many dots!");
     }
 
-    public static boolean referToNumber(char symbol) {
-        return (symbol >= DIGIT_0 && symbol <= DIGIT_9) || symbol == DOT;
+    private boolean referToNumber(char symbol, int index) {
+        return (symbol >= DIGIT_0 && symbol <= DIGIT_9) || symbol == DOT ||
+                symbolMinusIsPartOfNumber(symbol, index) ;
     }
 
-    public void getOperator(char operatorThis, int priorityThis)
+    private boolean symbolMinusIsPartOfNumber(char symbol, int index) {
+        return symbol == MINUS && (index == 0 || inputString.charAt(index - 1) == OPEN_BRACKET);
+    }
+
+    private void getOperator(char operatorThis, int priorityThis)
     {
         while( !operatorStack.isEmpty() )
         {
             char operatorTop = (char) operatorStack.remove();
-            if( operatorTop == OPEN_BRACKET ) // Если это '('
+            if( operatorTop == OPEN_BRACKET )
             {
-                operatorStack.addFirst(operatorTop); // Вернуть '('
+                operatorStack.addFirst(operatorTop);
                 break;
             }
-            else // Оператор
+            else
             {
                 int priorityTop; // Приоритет нового оператора
                 if (operatorTop == PLUS || operatorTop == MINUS) priorityTop = PRIORITY_LOW;
@@ -121,7 +126,7 @@ public class InfixToPostfix {
         operatorStack.addFirst(operatorThis); // Занесение в стек нового оператора
     }
 
-    public void getClosingBracket(char symbol)
+    private void getClosingBracket(char symbol)
     {
         boolean foundOpeningBracket = false;
         while( !operatorStack.isEmpty() )

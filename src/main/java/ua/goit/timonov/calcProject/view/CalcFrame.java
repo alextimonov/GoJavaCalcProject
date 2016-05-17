@@ -1,7 +1,6 @@
 package ua.goit.timonov.calcProject.view;
 
 import ua.goit.timonov.calcProject.logic.Evaluator;
-import ua.goit.timonov.calcProject.logic.StringExpression;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,19 +10,21 @@ import java.awt.event.ActionListener;
 /**
  * Created by Alex on 15.05.2016.
  */
-public class SimpleFrame extends JFrame {
+public class CalcFrame extends JFrame {
 
-    public static final String START_ZERO = "0";
+    public static final String START_ZERO = "0.0";
+    public static final String MESSAGE_ERROR = "ERROR!";
+
     private JTextField textField;
     private JPanel buttonPanel;
 
     public static final int WIDTH_DEFAULT = 250;
     public static final int HEIGHT_DEFAULT = 250;
 
-    private StringBuilder expression = new StringBuilder();
+    private String expression = new String();
     private Evaluator evaluator = new Evaluator();
 
-    public SimpleFrame()  {
+    public CalcFrame()  {
 
 //        setLocation(300, 200);
 //        frame.setUndecorated(true);
@@ -54,83 +55,103 @@ public class SimpleFrame extends JFrame {
         JButton buttonThree = new JButton("3");
         JButton buttonFour = new JButton("4");*/
 
-        textField = new JTextField("0");
-        textField.setSize(280, 30);
+        textField = new JTextField(START_ZERO);
+        textField.setSize(240, 30);
         textField.setLocation(1, 180);
         add(textField);
 
         buttonPanel = new JPanel();
-        buttonPanel.setSize(280, 200);
-        buttonPanel.setLocation(1, 30);
+        buttonPanel.setSize(248, 200);
         add(buttonPanel);
+        buttonPanel.setLocation(1, 1);
 
         JButton buttonEqual = new JButton("=");
         JButton buttonReset = new JButton("C");
         JButton buttonBackspace = new JButton("<");
 
-        makeButton("7", '7');
-        makeButton("8", '8');
-        makeButton("9", '9');
-        makeButton("/", '/');
+        makeButton('7');
+        makeButton('8');
+        makeButton('9');
+        makeButton('/');
         buttonPanel.add(buttonReset);
 
-        makeButton("4", '4');
-        makeButton("5", '5');
-        makeButton("6", '6');
-        makeButton("*", '*');
+        makeButton('4');
+        makeButton('5');
+        makeButton('6');
+        makeButton('*');
         buttonPanel.add(buttonBackspace);
 
-        makeButton("1", '1');
-        makeButton("2", '2');
-        makeButton("3", '3');
-        makeButton("-", '-');
-        makeButton("(", '(');
+        makeButton('1');
+        makeButton('2');
+        makeButton('3');
+        makeButton('-');
+        makeButton('(');
 
-        makeButton("0", '0');
-        makeButton(".", '.');
+        makeButton('0');
+        makeButton('.');
         buttonPanel.add(buttonEqual);
-        makeButton("+", '+');
-        makeButton(")", ')');
+        makeButton('+');
+        makeButton(')');
 
         buttonEqual.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 try {
-                    double result = evaluator.evaluate(expression.toString());
+                    expression = textField.getText();
+                    double result = evaluator.evaluate(expression);
                     textField.setText(String.valueOf(result));
                 }
                 catch (Exception ex) {
-                    textField.setText("Error!");
+                    textField.setText(MESSAGE_ERROR);
                 }
-                expression = new StringBuilder();
             }
         });
 
         buttonBackspace.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (expression.length() > 1) {
-                    expression.deleteCharAt(expression.length() - 1);
-                    textField.setText(expression.toString());
+                expression = textField.getText();
+                if (lineCouldBeReduced()) {
+                    textField.setText(expression.substring(0, expression.length() - 1));
                 }
                 else {
-                    expression = new StringBuilder();
                     textField.setText(START_ZERO);
                 }
 
+            }
+
+            private boolean lineCouldBeReduced() {
+                return expression.length() > 1 && !expression.equals(START_ZERO) && !expression.equals(MESSAGE_ERROR);
             }
         });
 
         buttonReset.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                expression = new StringBuilder();
                 textField.setText(START_ZERO);
             }
         });
 
+    }
 
-        /*// add buttons to panel
+    public void makeButton(final char symbol) {
+        JButton button = new JButton(String.valueOf(symbol));
+        buttonPanel.add(button);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (textField.getText().equals(START_ZERO)) {
+                    textField.setText(String.valueOf(symbol));
+                }
+                else {
+                    textField.setText(textField.getText() + symbol);
+                }
+            }
+        });
+    }
+
+    /* from frame
+    // add buttons to panel
         buttonPanel.add(buttonOne);
         buttonPanel.add(buttonTwo);
         buttonPanel.add(buttonThree);
@@ -149,19 +170,6 @@ public class SimpleFrame extends JFrame {
         buttonFour.addActionListener(buttonFourAction);*/
 
 //        pack();
-    }
-
-    public  void makeButton(String name, final char symbol) {
-        JButton button = new JButton(name);
-        buttonPanel.add(button);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                expression.append(symbol);
-                textField.setText(expression.toString());
-            }
-        });
-    }
 
    /* private class ButtonPressed implements ActionListener {
         private char symbol;

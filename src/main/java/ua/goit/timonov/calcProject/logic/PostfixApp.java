@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 /**
  * Created by Alex on 15.05.2016.
  */
+@Deprecated
 public class PostfixApp {
 
     public static void main(String[] args) throws IOException
