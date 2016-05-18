@@ -3,12 +3,12 @@ package ua.goit.timonov.calcProject.logic;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
- * Created by Alex on 14.05.2016.
+ * Class to transform infix writing to postfix one
  */
 public class InfixToPostfix {
+    /* char constants */
     public static final char DIGIT_0 = '0';
     public static final char DIGIT_9 = '9';
     public static final char DOT = '.';
@@ -16,27 +16,37 @@ public class InfixToPostfix {
     public static final char MINUS = '-';
     public static final char MULTIPLY = '*';
     public static final char DIVIDE = '/';
-    public static final char OPEN_BRACKET = '(';
-    public static final char CLOSE_BRACKET = ')';
+    public static final char OPENING_BRACE = '(';
+    public static final char CLOSING_BRACE = ')';
     public static final char SPACE = ' ';
+
+    /* levels of math operator priority */
     public static final int PRIORITY_LOW = 1;
     public static final int PRIORITY_HIGH = 2;
 
-    private static Logger log = Logger.getLogger(InfixToPostfix.class.getName());
-
-    private LinkedList operatorStack;
+    // input string with infix writing of expression
     private String inputString;
+    // auxiliary stack with math operators
+    private LinkedList operatorStack;
+    // output list with postfix writing of expression
     private List postfixWrite = new ArrayList<String>();
 
+    /**
+     * InfixToPostfix constructor
+     * @param inputString   input string with infix writing of math expression
+     */
     public InfixToPostfix(String inputString)
     {
         this.inputString = inputString;
         operatorStack = new LinkedList<Character>();
     }
 
+    /**
+     * transforms infix writing to postfix one
+     * @return      list of strings in order of postfix writing of expression
+     */
     public List<String> transform()
     {
-        log.info("Input string: " + inputString);
         StringBuilder nextNumber = new StringBuilder();
         for (int j = 0; j < inputString.length(); j++)
         {
@@ -57,11 +67,11 @@ public class InfixToPostfix {
                     case DIVIDE:
                         getOperator(symbol, PRIORITY_HIGH);
                     break;
-                    case OPEN_BRACKET:
+                    case OPENING_BRACE:
                         operatorStack.addFirst(symbol);
                     break;
-                    case CLOSE_BRACKET:
-                        getClosingBracket(symbol);
+                    case CLOSING_BRACE:
+                        getClosingBrace();
                     break;
                     case SPACE:
                         // NOP
@@ -75,13 +85,14 @@ public class InfixToPostfix {
             checkNumber(nextNumber);
             postfixWrite.add(nextNumber.toString());
         }
-        while( !operatorStack.isEmpty() ) // Извлечение оставшихся операторов
+        while( !operatorStack.isEmpty() )
         {
-            postfixWrite.add(String.valueOf(operatorStack.remove())); // write to output
+            postfixWrite.add(String.valueOf(operatorStack.remove()));
         }
-        return postfixWrite; // Возвращение постфиксного выражения
+        return postfixWrite;
     }
 
+    // checks if given string supposed to contain double number has too many dots
     private void checkNumber(StringBuilder nextNumber) {
         int numberOfDots = 0;
         for (int i = 0; i < nextNumber.length(); i++) {
@@ -90,54 +101,59 @@ public class InfixToPostfix {
         if (numberOfDots > 1) throw new IllegalArgumentException("Wrong number! Too many dots!");
     }
 
+    // checks if symbol at given place of string can be part of number
     private boolean referToNumber(char symbol, int index) {
         return (symbol >= DIGIT_0 && symbol <= DIGIT_9) || symbol == DOT ||
-                symbolMinusIsPartOfNumber(symbol, index) ;
+                minusIsPartOfNumber(symbol, index) ;
     }
 
-    private boolean symbolMinusIsPartOfNumber(char symbol, int index) {
-        return symbol == MINUS && (index == 0 || inputString.charAt(index - 1) == OPEN_BRACKET);
+    // checks if founded sign can be part of number
+    private boolean minusIsPartOfNumber(char symbol, int index) {
+        return symbol == MINUS && (index == 0 || inputString.charAt(index - 1) == OPENING_BRACE);
     }
 
+    // compares priorities of founded operatorThis and operatorTop from the auxiliary stack
+    // pushes operator operatorThis to auxiliary stack, writes operators to output list with postfix writing
     private void getOperator(char operatorThis, int priorityThis)
     {
         while( !operatorStack.isEmpty() )
         {
             char operatorTop = (char) operatorStack.remove();
-            if( operatorTop == OPEN_BRACKET )
+            if( operatorTop == OPENING_BRACE)
             {
                 operatorStack.addFirst(operatorTop);
                 break;
             }
             else
             {
-                int priorityTop; // Приоритет нового оператора
+                int priorityTop;
                 if (operatorTop == PLUS || operatorTop == MINUS) priorityTop = PRIORITY_LOW;
                 else priorityTop = PRIORITY_HIGH;
-                if (priorityTop < priorityThis) // Если приоритет нового оператора
-                { // меньше приоритета старого
-                    operatorStack.addFirst(operatorTop); // Сохранить новый оператор
+                if (priorityTop < priorityThis)
+                {
+                    operatorStack.addFirst(operatorTop);
                     break;
                 }
-                else // Приоритет нового оператора не меньше приоритета старого
+                else
                     postfixWrite.add(String.valueOf(operatorTop));
             }
         }
-        operatorStack.addFirst(operatorThis); // Занесение в стек нового оператора
+        operatorStack.addFirst(operatorThis);
     }
 
-    private void getClosingBracket(char symbol)
+    // writes operators between opening and closing braces from auxiliary stack to postfix writing of expression
+    private void getClosingBrace()
     {
-        boolean foundOpeningBracket = false;
+        boolean foundOpeningBrace = false;
         while( !operatorStack.isEmpty() )
         {
             char operatorTop = (char) operatorStack.remove();
-            if( operatorTop == OPEN_BRACKET ) {
-                foundOpeningBracket = true;
+            if( operatorTop == OPENING_BRACE) {
+                foundOpeningBrace = true;
                 break;
             }
             else postfixWrite.add(String.valueOf(operatorTop));
         }
-        if (!foundOpeningBracket) throw new IllegalArgumentException("There's closing bracket before opening!");
+        if (!foundOpeningBrace) throw new IllegalArgumentException("There's closing brace before opening!");
     }
 }

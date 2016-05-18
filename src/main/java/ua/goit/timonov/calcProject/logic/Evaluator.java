@@ -6,7 +6,10 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Created by Alex on 15.05.2016.
+ * Evaluator for math expressions with braces
+ * Supports math operations: addition, subtraction, multiplication, division
+ * Supports sign "-" for start numbers of numbers after opening braces
+ * Logs results to files "calcProject_log.txt"
  */
 public class Evaluator {
 
@@ -14,22 +17,22 @@ public class Evaluator {
 
     public double evaluate(String inputString) {
         try {
-            LogManager.getLogManager().readConfiguration(Evaluator.class.getResourceAsStream("/logging.properties"));
+            LogManager.getLogManager().readConfiguration(
+                    Evaluator.class.getResourceAsStream("/logging.properties"));
         } catch (IOException e) {
             System.err.println("Could not setup logger configuration: " + e.toString());
         }
-        log.fine("Input string: " + inputString);
+        log.info("Input string: " + inputString);
         double result = 0;
         try {
             List<String> postfix = new InfixToPostfix(inputString).transform();
-            result = new ParsePost(postfix).doParse();
+            result = new ParsePostfix(postfix).doParse();
         }
         catch (IllegalArgumentException exception) {
-            exception.printStackTrace();
             log.severe("Exception: " + exception.toString());
             throw exception;
         }
-        log.fine("Resulting value: " + String.valueOf(result));
+        log.info("Resulting value: " + String.valueOf(result));
         return result;
     }
 }

@@ -3,12 +3,13 @@ package ua.goit.timonov.calcProject.view;
 import java.awt.*;
 
 /**
- * Created by Alex on 15.05.2016.
+ * Main class that runs app
  */
 public class CalcMain {
-    private StringBuilder expression = new StringBuilder();
+//    private static Logger log = Logger.getLogger(CalcMain.class.getName());
 
     public static void main(String[] args) {
+
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 CalcFrame frame = new CalcFrame();

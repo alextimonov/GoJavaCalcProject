@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Created by Alex on 15.05.2016.
+ * Testing class for Evaluator
  */
 public class EvaluatorTest {
 
@@ -72,6 +72,14 @@ public class EvaluatorTest {
     public void testEvaluateNormal_8() {
         String inputString = "(5 + 2.5) ";
         double expected = 7.5;
+        double actual = evaluator.evaluate(inputString);
+        assertEquals(expected, actual, 10E-6);
+    }
+
+    @Test
+    public void testEvaluateNormal_9() {
+        String inputString = "-12 /(-6 + 2) ";
+        double expected = 3.0;
         double actual = evaluator.evaluate(inputString);
         assertEquals(expected, actual, 10E-6);
     }
