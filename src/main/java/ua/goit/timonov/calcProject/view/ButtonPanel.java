@@ -30,6 +30,8 @@ public class ButtonPanel extends JPanel {
     private Evaluator evaluator = new Evaluator();
     // text field for input expression and output result
     private JTextField textField;
+
+    private boolean resultJustWasShown = false;
     // static logger
     private static Logger log = Logger.getLogger(CalcMain.class.getName());
 
@@ -95,6 +97,7 @@ public class ButtonPanel extends JPanel {
                     log.severe("Exception: " + exception.toString());
                     textField.setText(MESSAGE_ERROR);
                 }
+                resultJustWasShown = true;
             }
         });
 
@@ -133,11 +136,16 @@ public class ButtonPanel extends JPanel {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (textField.getText().equals(START_ZERO)) {
+                if (resultJustWasShown) {
                     textField.setText(String.valueOf(symbol));
+                    resultJustWasShown = false;
                 }
                 else {
-                    textField.setText(textField.getText() + symbol);
+                    if (textField.getText().equals(START_ZERO)) {
+                        textField.setText(String.valueOf(symbol));
+                    } else {
+                        textField.setText(textField.getText() + symbol);
+                    }
                 }
             }
         });
