@@ -1,6 +1,5 @@
 package ua.goit.timonov.calcProject.view;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -13,9 +12,6 @@ public class CalcMain {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 CalcFrame frame = new CalcFrame();
-                frame.setTitle("Calculator Project");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setVisible(true);
             }
         });
     }
