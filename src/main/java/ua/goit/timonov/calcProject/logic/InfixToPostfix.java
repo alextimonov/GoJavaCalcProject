@@ -62,20 +62,21 @@ public class InfixToPostfix {
                     case PLUS:
                     case MINUS:
                         getOperator(symbol, PRIORITY_LOW);
-                    break;
+                        break;
                     case MULTIPLY:
                     case DIVIDE:
                         getOperator(symbol, PRIORITY_HIGH);
-                    break;
+                        break;
                     case OPENING_BRACE:
                         operatorStack.addFirst(symbol);
-                    break;
+                        break;
                     case CLOSING_BRACE:
-                        getClosingBrace();
-                    break;
+                        checkIfBracesAreEmpty(j - 1);
+                        findOpeningBrace();
+                        break;
                     case SPACE:
                         // NOP
-                    break;
+                        break;
                     default:
                         throw new IllegalArgumentException("There is illegal symbol!");
                 }
@@ -92,7 +93,15 @@ public class InfixToPostfix {
         return postfixWrite;
     }
 
-    // checks if given string supposed to contain double number has too many dots
+    // checks if found braces are empty
+    private void checkIfBracesAreEmpty(int j) {
+        while (j > 0 && inputString.charAt(j) == SPACE) j--;
+        if (inputString.charAt(j) == OPENING_BRACE) {
+            throw new IllegalArgumentException("There are empty braces!");
+        }
+    }
+
+    // checks if given string is supposed to contain double number has too many dots
     private void checkNumber(StringBuilder nextNumber) {
         int numberOfDots = 0;
         for (int i = 0; i < nextNumber.length(); i++) {
@@ -142,7 +151,7 @@ public class InfixToPostfix {
     }
 
     // writes operators between opening and closing braces from auxiliary stack to postfix writing of expression
-    private void getClosingBrace()
+    private void findOpeningBrace()
     {
         boolean foundOpeningBrace = false;
         while( !operatorStack.isEmpty() )

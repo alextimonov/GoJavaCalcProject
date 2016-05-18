@@ -13,26 +13,27 @@ import java.util.logging.Logger;
  */
 public class Evaluator {
 
-    private static Logger log = Logger.getLogger(Evaluator.class.getName());
+//    private static Logger log = Logger.getLogger(Evaluator.class.getName());
 
     public double evaluate(String inputString) {
-        try {
+        /*try {
             LogManager.getLogManager().readConfiguration(
                     Evaluator.class.getResourceAsStream("/logging.properties"));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.err.println("Could not setup logger configuration: " + e.toString());
         }
-        log.info("Input string: " + inputString);
+        log.info("Input string: " + inputString);*/
         double result = 0;
         try {
             List<String> postfix = new InfixToPostfix(inputString).transform();
             result = new ParsePostfix(postfix).doParse();
         }
         catch (IllegalArgumentException exception) {
-            log.severe("Exception: " + exception.toString());
+//            log.severe("Exception: " + exception.toString());
             throw exception;
         }
-        log.info("Resulting value: " + String.valueOf(result));
+//        log.info("Resulting value: " + String.valueOf(result));
         return result;
     }
 }

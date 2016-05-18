@@ -1,4 +1,6 @@
-package ua.goit.timonov.calcProject.view;
+package ua.goit.timonov.calcProject.controller;
+
+import ua.goit.timonov.calcProject.view.CalcFrame;
 
 import java.awt.*;
 
@@ -6,7 +8,7 @@ import java.awt.*;
  * Main class that runs app
  */
 public class CalcMain {
-//    private static Logger log = Logger.getLogger(CalcMain.class.getName());
+
 
     public static void main(String[] args) {
 

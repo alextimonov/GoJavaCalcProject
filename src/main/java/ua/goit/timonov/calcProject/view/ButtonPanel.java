@@ -1,11 +1,15 @@
 package ua.goit.timonov.calcProject.view;
 
+import ua.goit.timonov.calcProject.controller.CalcMain;
 import ua.goit.timonov.calcProject.logic.Evaluator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NORTH;
@@ -26,6 +30,8 @@ public class ButtonPanel extends JPanel {
     private Evaluator evaluator = new Evaluator();
     // text field for input expression and output result
     private JTextField textField;
+    // static logger
+    private static Logger log = Logger.getLogger(CalcMain.class.getName());
 
     /**
      * Button panel constructor
@@ -35,6 +41,12 @@ public class ButtonPanel extends JPanel {
         setLayout(new GridBagLayout());
         setVisible(true);
         this.textField = textField;
+        try {
+            LogManager.getLogManager().readConfiguration(Evaluator.class.getResourceAsStream("/logging.properties"));
+        }
+        catch (IOException e) {
+            System.err.println("Could not setup logger configuration: " + e.toString());
+        }
         createButtons();
     }
 
@@ -74,10 +86,13 @@ public class ButtonPanel extends JPanel {
             public void actionPerformed(ActionEvent event) {
                 try {
                     expression = textField.getText();
+                    log.info("Input string: " + expression);
                     double result = evaluator.evaluate(expression);
                     textField.setText(String.valueOf(result));
+                    log.info("Resulting value: " + String.valueOf(result));
                 }
-                catch (Exception ex) {
+                catch (IllegalArgumentException exception) {
+                    log.severe("Exception: " + exception.toString());
                     textField.setText(MESSAGE_ERROR);
                 }
             }
